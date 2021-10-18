@@ -1,2 +1,12 @@
-package com.barrostech.domain.repository;public class RestauranteRepositoryQueries {
+package com.barrostech.domain.repository;
+
+import com.barrostech.domain.model.Restaurante;
+
+
+import java.math.BigDecimal;
+import java.util.List;
+
+public interface RestauranteRepositoryQueries {
+
+    List<Restaurante> find(String nome, BigDecimal taxaFreteInicial, BigDecimal taxaFreteFinal);
 }
