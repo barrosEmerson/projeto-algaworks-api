@@ -13,6 +13,9 @@ import javax.swing.text.html.Option;
 
 public interface RestauranteRepository extends JpaRepository<Restaurante, Long>, RestauranteRepositoryQueries {
 
+    @Query("from Restaurante r join r.cozinha left join fetch r.formasPagamento ")
+    List<Restaurante> findAll();
+
     List<Restaurante> findByTaxaFreteBetween(BigDecimal taxaInicial, BigDecimal taxaFinal);
 
     List<Restaurante> consultarPorNome(String nome, Long cozinha);
