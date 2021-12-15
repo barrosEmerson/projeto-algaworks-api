@@ -13,7 +13,7 @@ import javax.swing.text.html.Option;
 
 public interface RestauranteRepository extends JpaRepository<Restaurante, Long>, RestauranteRepositoryQueries {
 
-    @Query("from Restaurante r join r.cozinha left join fetch r.formasPagamento ")
+    @Query("from Restaurante r join r.cozinha ")
     List<Restaurante> findAll();
 
     List<Restaurante> findByTaxaFreteBetween(BigDecimal taxaInicial, BigDecimal taxaFinal);
