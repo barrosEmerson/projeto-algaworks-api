@@ -1,6 +1,7 @@
 package com.barrostech.api.controller;
 
 import com.barrostech.domain.exception.EntidadeNaoEncontradaException;
+import com.barrostech.domain.exception.NegocioException;
 import com.barrostech.domain.model.Cozinha;
 import com.barrostech.domain.model.Restaurante;
 import com.barrostech.domain.repository.RestauranteRepository;
@@ -32,44 +33,36 @@ public class RestautanteController {
     }
 
     @PostMapping
-    public ResponseEntity<?> adicionar(@RequestBody Restaurante restaurante){
+    public Restaurante adicionar(@RequestBody Restaurante restaurante){
         try {
-            cadastroRestauranteService.salvar(restaurante);
-            return ResponseEntity.status(HttpStatus.CREATED).body(restaurante);
+            return cadastroRestauranteService.salvar(restaurante);
         }catch (EntidadeNaoEncontradaException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            throw new NegocioException(e.getMessage());
         }
+
     }
 
     @PutMapping("/{restauranteId}")
-    public ResponseEntity<?> atualizar(@PathVariable Long restauranteId,
+    public Restaurante atualizar(@PathVariable Long restauranteId,
                                        @RequestBody Restaurante restaurante) {
-        try {
-            Restaurante restauranteAtual = restauranteRepository.findById(restauranteId).orElse(null);
+            Restaurante restauranteAtual = cadastroRestauranteService.buscarOuFalhar(restauranteId);
 
-            if (restauranteAtual != null) {
                 BeanUtils.copyProperties(restaurante, restauranteAtual, "id","formasPagamento","endereco","dataCadastro");
 
-                restauranteAtual = cadastroRestauranteService.salvar(restauranteAtual);
-                return ResponseEntity.ok(restauranteAtual);
-            }
+                try {
+                    return cadastroRestauranteService.salvar(restauranteAtual);
 
-            return ResponseEntity.notFound().build();
+                }catch (EntidadeNaoEncontradaException e){
+                    throw new NegocioException(e.getMessage());
+                }
 
-        } catch (EntidadeNaoEncontradaException e) {
-            return ResponseEntity.badRequest()
-                    .body(e.getMessage());
-        }
+
     }
 
     @PatchMapping("/{restauranteId}")
-    public ResponseEntity<?> atualizarParcial(@PathVariable Long restauranteId,
+    public Restaurante atualizarParcial(@PathVariable Long restauranteId,
                                               @RequestBody Map<String, Object> campos) {
-        Restaurante restauranteAtual = restauranteRepository.findById(restauranteId).orElse(null);
-
-        if (restauranteAtual == null) {
-            return ResponseEntity.notFound().build();
-        }
+        Restaurante restauranteAtual = cadastroRestauranteService.buscarOuFalhar(restauranteId);
 
         merge(campos, restauranteAtual);
 

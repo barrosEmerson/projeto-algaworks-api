@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class CadastroEstadoService {
 
+    private static final String MSG_ESTADO_NAO_ENCONTRADO = "Não existe em cadastro de estado com o código %d";
     @Autowired
     private EstadoRepository estadoRepository;
 
@@ -24,12 +25,18 @@ public class CadastroEstadoService {
             estadoRepository.deleteById(estadoId);
         }catch (EmptyResultDataAccessException e){
             throw new EntidadeNaoEncontradaException(
-                    String.format("Não existe em cadastro de estado com o código %d",estadoId)
+                    String.format(MSG_ESTADO_NAO_ENCONTRADO,estadoId)
             );
         }catch (DataIntegrityViolationException e){
             throw new EntidadeEmUsoException(
-                    String.format("Estado de código %d não pode ser removido, pois está em uso",estadoId)
+                    String.format(MSG_ESTADO_NAO_ENCONTRADO,estadoId)
             );
         }
+    }
+
+    public Estado buscarOuFalhar(Long estadoId){
+        return estadoRepository.findById(estadoId).orElseThrow(
+                ()-> new EntidadeNaoEncontradaException(String.format(MSG_ESTADO_NAO_ENCONTRADO, estadoId))
+        );
     }
 }
