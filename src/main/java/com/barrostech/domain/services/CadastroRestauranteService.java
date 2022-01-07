@@ -1,6 +1,7 @@
 package com.barrostech.domain.services;
 
 import com.barrostech.domain.exception.EntidadeNaoEncontradaException;
+import com.barrostech.domain.exception.RestauranteNaoEncontradoException;
 import com.barrostech.domain.model.Cozinha;
 import com.barrostech.domain.model.Restaurante;
 import com.barrostech.domain.repository.CozinhaRepository;
@@ -11,7 +12,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class CadastroRestauranteService {
 
-    private static final String MSG_RESTAURANTE_NAO_ENCONTRADO = "Não existe restaurante de código %d";
     public static final String COZINHA_NAO_EXISTENTE = "Não existe cadastro de cozinha com o código %d";
     @Autowired
     private RestauranteRepository restauranteRepository;
@@ -33,7 +33,6 @@ public class CadastroRestauranteService {
 
     public Restaurante buscarOuFalhar(Long restauranteId){
         return restauranteRepository.findById(restauranteId).orElseThrow(
-                ()-> new EntidadeNaoEncontradaException(String.format(MSG_RESTAURANTE_NAO_ENCONTRADO, restauranteId))
-        );
+                ()-> new RestauranteNaoEncontradoException(restauranteId));
     }
 }

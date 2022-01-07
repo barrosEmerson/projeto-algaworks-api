@@ -1,5 +1,6 @@
 package com.barrostech.api.controller;
 
+import com.barrostech.domain.exception.CozinhaNaoEncontradaException;
 import com.barrostech.domain.exception.EntidadeNaoEncontradaException;
 import com.barrostech.domain.exception.NegocioException;
 import com.barrostech.domain.model.Cozinha;
@@ -52,7 +53,7 @@ public class RestautanteController {
                 try {
                     return cadastroRestauranteService.salvar(restauranteAtual);
 
-                }catch (EntidadeNaoEncontradaException e){
+                }catch (CozinhaNaoEncontradaException e){
                     throw new NegocioException(e.getMessage());
                 }
 

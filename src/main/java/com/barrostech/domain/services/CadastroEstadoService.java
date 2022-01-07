@@ -2,6 +2,7 @@ package com.barrostech.domain.services;
 
 import com.barrostech.domain.exception.EntidadeEmUsoException;
 import com.barrostech.domain.exception.EntidadeNaoEncontradaException;
+import com.barrostech.domain.exception.EstadoNaoEncontradoException;
 import com.barrostech.domain.model.Estado;
 import com.barrostech.domain.repository.EstadoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +13,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class CadastroEstadoService {
 
-    private static final String MSG_ESTADO_NAO_ENCONTRADO = "Não existe em cadastro de estado com o código %d";
+    private static final String MSG_ESTADO_EM_USO = "o ESTADO de código %d está em uso";
     @Autowired
     private EstadoRepository estadoRepository;
 
@@ -24,19 +25,16 @@ public class CadastroEstadoService {
         try {
             estadoRepository.deleteById(estadoId);
         }catch (EmptyResultDataAccessException e){
-            throw new EntidadeNaoEncontradaException(
-                    String.format(MSG_ESTADO_NAO_ENCONTRADO,estadoId)
-            );
+            throw new EstadoNaoEncontradoException(estadoId);
         }catch (DataIntegrityViolationException e){
             throw new EntidadeEmUsoException(
-                    String.format(MSG_ESTADO_NAO_ENCONTRADO,estadoId)
+                    String.format(MSG_ESTADO_EM_USO,estadoId)
             );
         }
     }
 
     public Estado buscarOuFalhar(Long estadoId){
         return estadoRepository.findById(estadoId).orElseThrow(
-                ()-> new EntidadeNaoEncontradaException(String.format(MSG_ESTADO_NAO_ENCONTRADO, estadoId))
-        );
+                ()-> new EstadoNaoEncontradoException(estadoId));
     }
 }

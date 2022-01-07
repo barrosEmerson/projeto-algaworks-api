@@ -1,6 +1,7 @@
 package com.barrostech.api.controller;
 
 import com.barrostech.domain.exception.EntidadeNaoEncontradaException;
+import com.barrostech.domain.exception.EstadoNaoEncontradoException;
 import com.barrostech.domain.exception.NegocioException;
 import com.barrostech.domain.model.Cidade;
 import com.barrostech.domain.repository.CidadeRepository;
@@ -41,8 +42,8 @@ public class CidadeController {
 
         try {
             return cadastroCidade.salvar(cidade);
-        }catch (EntidadeNaoEncontradaException e){
-            throw new NegocioException(e.getMessage());
+        }catch (EstadoNaoEncontradoException e){
+            throw new NegocioException(e.getMessage(),e);
         }
     }
 
@@ -50,14 +51,15 @@ public class CidadeController {
     @PutMapping("/{cidadeId}")
     public Cidade atualizar(@PathVariable Long cidadeId,
                             @RequestBody Cidade cidade) {
-        Cidade cidadeAtual = cadastroCidade.buscarOuFalhar(cidadeId);
 
-        BeanUtils.copyProperties(cidade, cidadeAtual, "id");
 
         try {
+            Cidade cidadeAtual = cadastroCidade.buscarOuFalhar(cidadeId);
+
+            BeanUtils.copyProperties(cidade, cidadeAtual, "id");
             return cadastroCidade.salvar(cidadeAtual);
-        }catch (EntidadeNaoEncontradaException e){
-            throw new NegocioException(e.getMessage());
+        }catch (EstadoNaoEncontradoException e){
+            throw new NegocioException(e.getMessage(), e);
         }
 
     }
