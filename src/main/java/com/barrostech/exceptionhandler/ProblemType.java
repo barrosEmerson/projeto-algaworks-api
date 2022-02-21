@@ -5,7 +5,10 @@ import lombok.Getter;
 @Getter
 public enum ProblemType {
 
-    ENTIDADE_NAO_ENCONTRADA("/entidade-nao-encontrada","Entidade não encontrada");
+    JSON_INVALIDO("/json-incorreto","Formato de Json errado"),
+    ENTIDADE_NAO_ENCONTRADA("/entidade-nao-encontrada","Entidade não encontrada"),
+    ENTIDADE_EM_USO("/entidade-em-uso","Entidade em uso"),
+    ERRO_NEGOCIO("/erro-negocio","Violação na regra de negócio");
 
 
     private String uri;
