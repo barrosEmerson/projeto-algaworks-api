@@ -6,7 +6,9 @@ import lombok.Getter;
 public enum ProblemType {
 
     JSON_INVALIDO("/json-incorreto","Formato de Json errado"),
-    ENTIDADE_NAO_ENCONTRADA("/entidade-nao-encontrada","Entidade não encontrada"),
+    PARAMETRO_INVALIDO("/parametro-incorreto","Parametro informado incorreto"),
+    RECURSO_NAO_ENCONTRADO("/recurso-nao-encontrado","Recurso não encontrado"),
+    ERRO_NO_SISTEMA("/erro-interno-sistema","Erro interno do sistema"),
     ENTIDADE_EM_USO("/entidade-em-uso","Entidade em uso"),
     ERRO_NEGOCIO("/erro-negocio","Violação na regra de negócio");
 
