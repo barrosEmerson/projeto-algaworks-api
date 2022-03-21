@@ -9,6 +9,7 @@ public enum ProblemType {
     PARAMETRO_INVALIDO("/parametro-incorreto","Parametro informado incorreto"),
     RECURSO_NAO_ENCONTRADO("/recurso-nao-encontrado","Recurso não encontrado"),
     ERRO_NO_SISTEMA("/erro-interno-sistema","Erro interno do sistema"),
+    DADOS_INVALIDOS("/dados-invalidos","Dados inválidos"),
     ENTIDADE_EM_USO("/entidade-em-uso","Entidade em uso"),
     ERRO_NEGOCIO("/erro-negocio","Violação na regra de negócio");
 

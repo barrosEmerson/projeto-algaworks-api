@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 import com.barrostech.domain.model.Estado;
 import com.barrostech.domain.repository.EstadoRepository;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/estados")
 public class EstadosController {
@@ -52,7 +54,7 @@ public class EstadosController {
 		cadastroEstadoService.excluir(estadoId);
 	}
 	@PostMapping
-	public Estado adicionar(@RequestBody Estado estado){
+	public Estado adicionar(@RequestBody @Valid Estado estado){
 		return cadastroEstadoService.salvar(estado);
 	}
 }

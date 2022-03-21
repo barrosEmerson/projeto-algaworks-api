@@ -11,6 +11,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -18,6 +20,8 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.stream.Collectors;
 
 
@@ -37,7 +41,9 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
         ProblemType problemType = ProblemType.JSON_INVALIDO;
         String detail = "O corpo da requisição está inválido. Verifique erro de sintaxe.";
-        Problem problem = createProblemBuilder(status,problemType,detail).build();
+        Problem problem = createProblemBuilder(status,problemType,detail)
+
+                .build();
 
         return handleExceptionInternal(ex, problem, new HttpHeaders(), status,request);
     }
@@ -47,6 +53,27 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         ProblemType problemType = ProblemType.RECURSO_NAO_ENCONTRADO;
         String detail = String.format("O recurso '%s', que você tentou acessar, é inexistente.",ex.getRequestURL());
         Problem problem = createProblemBuilder(status,problemType,detail).build();
+
+        return handleExceptionInternal(ex, problem, new HttpHeaders(), status,request);
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        ProblemType problemType = ProblemType.DADOS_INVALIDOS;
+        String detail = String.format("Um ou mais campos estão inválidos. Faça o preenchimento correto e tente novamente.");
+
+        BindingResult bindingResult = ex.getBindingResult();
+        List<Field> problemFields = bindingResult.getFieldErrors().stream()
+                .map(fieldError -> Field.builder()
+                        .name(fieldError.getField())
+                        .userMessage(fieldError.getDefaultMessage())
+                        .build())
+                .collect(Collectors.toList());
+                ;
+
+        Problem problem = createProblemBuilder(status,problemType,detail)
+                .fields(problemFields)
+                .build();
 
         return handleExceptionInternal(ex, problem, new HttpHeaders(), status,request);
     }
@@ -127,6 +154,8 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         return handleExceptionInternal(e, problem, new HttpHeaders(), status,request);
     }
 
+
+
     @ExceptionHandler(NegocioException.class)
     public ResponseEntity<?> handleNegocioException(
             NegocioException e, WebRequest request){
@@ -157,11 +186,13 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         if(body == null){
 
             body = Problem.builder()
+                    .timestamp(LocalDateTime.now())
                     .title(status.getReasonPhrase())
                     .status(status.value())
                     .build();
         }else if(body instanceof String){
             body = Problem.builder()
+                    .timestamp(LocalDateTime.now())
                     .title((String) body)
                     .status(status.value() )
                     .build();
@@ -175,6 +206,7 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
                 .status(status.value())
                 .type(problemType.getUri())
                 .title(problemType.getTitle())
-                .detail(detail);
+                .detail(detail)
+                .timestamp(LocalDateTime.now());
     }
 }

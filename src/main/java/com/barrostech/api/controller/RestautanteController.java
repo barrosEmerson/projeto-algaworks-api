@@ -1,5 +1,6 @@
 package com.barrostech.api.controller;
 
+import com.barrostech.Groups;
 import com.barrostech.domain.exception.CozinhaNaoEncontradaException;
 import com.barrostech.domain.exception.EntidadeNaoEncontradaException;
 import com.barrostech.domain.exception.NegocioException;
@@ -17,9 +18,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.util.ReflectionUtils;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +48,7 @@ public class RestautanteController {
     }
 
     @PostMapping
-    public Restaurante adicionar(@RequestBody Restaurante restaurante){
+    public Restaurante adicionar(@RequestBody @Valid Restaurante restaurante){
         try {
             return cadastroRestauranteService.salvar(restaurante);
         }catch (EntidadeNaoEncontradaException e){
@@ -55,8 +58,8 @@ public class RestautanteController {
     }
 
     @PutMapping("/{restauranteId}")
-    public Restaurante atualizar(@PathVariable Long restauranteId,
-                                       @RequestBody Restaurante restaurante) {
+    public Restaurante atualizar(@PathVariable  Long restauranteId,
+                                       @RequestBody @Valid Restaurante restaurante) {
             Restaurante restauranteAtual = cadastroRestauranteService.buscarOuFalhar(restauranteId);
 
                 BeanUtils.copyProperties(restaurante, restauranteAtual, "id","formasPagamento","endereco","dataCadastro");

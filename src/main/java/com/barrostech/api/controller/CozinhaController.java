@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 import com.barrostech.domain.model.Cozinha;
 import com.barrostech.domain.repository.CozinhaRepository;
 
+import javax.validation.Valid;
+
 @RestController
 @RequestMapping("/cozinhas")
 public class CozinhaController {
@@ -38,12 +40,12 @@ public class CozinhaController {
 	}
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public Cozinha salvar(@RequestBody Cozinha cozinha){
+	public Cozinha salvar(@RequestBody @Valid Cozinha cozinha){
 		return cadastroCozinhaService.salvar(cozinha);
 	}
 
 	@PutMapping("/{cozinhaId}")
-	public Cozinha atualizar(@PathVariable Long cozinhaId, @RequestBody Cozinha cozinha){
+	public Cozinha atualizar(@PathVariable Long cozinhaId, @RequestBody @Valid Cozinha cozinha){
 		 Cozinha cozinhaAtual = cadastroCozinhaService.buscarOuFalhar(cozinhaId);
 
 			BeanUtils.copyProperties(cozinha, cozinhaAtual, "id");
