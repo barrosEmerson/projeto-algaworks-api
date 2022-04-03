@@ -9,11 +9,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import javax.validation.groups.ConvertGroup;
 import javax.validation.groups.Default;
 
-import com.barrostech.Groups;
+import com.barrostech.core.validation.Groups;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 

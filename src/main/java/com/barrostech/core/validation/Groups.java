@@ -1,4 +1,4 @@
-package com.barrostech;
+package com.barrostech.core.validation;
 
 public interface Groups {
 
