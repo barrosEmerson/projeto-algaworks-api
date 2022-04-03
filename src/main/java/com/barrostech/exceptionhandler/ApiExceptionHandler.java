@@ -1,5 +1,6 @@
 package com.barrostech.exceptionhandler;
 
+import com.barrostech.core.validation.ValidacaoException;
 import com.barrostech.domain.exception.EntidadeEmUsoException;
 import com.barrostech.domain.exception.EntidadeNaoEncontradaException;
 import com.barrostech.domain.exception.NegocioException;
@@ -15,12 +16,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
-import org.springframework.web.server.i18n.LocaleContextResolver;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
@@ -70,19 +71,25 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         String detail = String.format("Um ou mais campos estão inválidos. Faça o preenchimento correto e tente novamente.");
 
         BindingResult bindingResult = ex.getBindingResult();
-        List<Field> problemFields = bindingResult.getFieldErrors().stream()
-                .map(fieldError -> {
+        List<Field> problemFields = bindingResult.getAllErrors().stream()
+                .map(objectError -> {
+                    String message = messageSource.getMessage(objectError, LocaleContextHolder.getLocale());
 
-                    String message = messageSource.getMessage(fieldError, LocaleContextHolder.getLocale());
+                    String name = objectError.getObjectName();
+
+                    if(objectError instanceof FieldError){
+                        name = ((FieldError) objectError).getField();
+                    }
+
                     return Field.builder()
-                            .name(fieldError.getField())
+                            .name(name)
                             .userMessage(message)
                             .build();
                 } )
                 .collect(Collectors.toList());
 
         Problem problem = createProblemBuilder(status,problemType,detail)
-                .fields(problemFields)
+                .objects(problemFields)
                 .build();
 
         return handleExceptionInternal(ex, problem, new HttpHeaders(), status,request);
@@ -138,6 +145,16 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
         Problem problem = createProblemBuilder(status,problemType,detail).build();
 
         return handleExceptionInternal(ex,problem,headers,status,request);
+    }
+
+    @ExceptionHandler(ValidacaoException.class)
+    public ResponseEntity<?> handleValidacaoException(ValidacaoException e, WebRequest request){
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        ProblemType problemType = ProblemType.JSON_INVALIDO;
+        String detail = e.getMessage();
+        Problem problem = createProblemBuilder(status,problemType,detail).build();
+
+        return  handleExceptionInternal(e,problem,new HttpHeaders(),status,request);
     }
 
     @ExceptionHandler(EntidadeNaoEncontradaException.class)
