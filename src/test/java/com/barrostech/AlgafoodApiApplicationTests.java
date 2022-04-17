@@ -1,5 +1,6 @@
 package com.barrostech;
 
+import com.barrostech.domain.exception.CozinhaNaoEncontradaException;
 import com.barrostech.domain.exception.EntidadeEmUsoException;
 import com.barrostech.domain.model.Cozinha;
 import com.barrostech.domain.services.CadastroCozinhaService;
@@ -14,7 +15,7 @@ import javax.validation.ConstraintViolationException;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
-class CadastroCozinhaIntegrationTests {
+class CadastroCozinhaIT {
 
 	@Autowired
 	private CadastroCozinhaService cadastroCozinha;
@@ -53,8 +54,19 @@ class CadastroCozinhaIntegrationTests {
 				Assertions.assertThrows(EntidadeEmUsoException.class, ()->{
 					cadastroCozinha.excluir(finalCozinha.getId());
 				});
+		assertThat(erroEsperado).isNotNull();
 
+	}
 
+	@Test
+	public void testarFalhaExcluirCozinhaInexistente(){
+		Cozinha cozinha = new Cozinha();
+		cozinha.setId(100L);
+		CozinhaNaoEncontradaException erroEsperado =
+				Assertions.assertThrows(CozinhaNaoEncontradaException.class, ()->{
+					cadastroCozinha.buscarOuFalhar(cozinha.getId());
+				});
+		assertThat(erroEsperado).isNotNull();
 	}
 
 }
