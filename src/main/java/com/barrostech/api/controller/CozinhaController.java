@@ -3,6 +3,10 @@ package com.barrostech.api.controller;
 import java.util.List;
 import java.util.Optional;
 
+import com.barrostech.api.converter.CozinhaDTOConverter;
+import com.barrostech.api.converter.CozinhaDTOtoCozinhaDomain;
+import com.barrostech.api.dto.CozinhaDTO;
+import com.barrostech.api.input.CozinhaDTOInput;
 import com.barrostech.domain.exception.EntidadeEmUsoException;
 import com.barrostech.domain.exception.EntidadeNaoEncontradaException;
 import com.barrostech.domain.services.CadastroCozinhaService;
@@ -26,32 +30,41 @@ public class CozinhaController {
 	private CozinhaRepository cozinhaRepository;
 	@Autowired
 	private CadastroCozinhaService cadastroCozinhaService;
+
+	@Autowired
+	private CozinhaDTOConverter cozinhaDTOConverter;
+
+	@Autowired
+	private CozinhaDTOtoCozinhaDomain cozinhaDomain;
 	
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<Cozinha> listar(){
-		return cozinhaRepository.findAll();
+	public List<CozinhaDTO> listar(){
+
+		return cozinhaDTOConverter.getListCozinhaDTO(cozinhaRepository.findAll());
 	}
 	
 	@GetMapping("/{id}")
-	public Cozinha buscarPorId(@PathVariable Long id) {
-		 return cadastroCozinhaService.buscarOuFalhar(id);
+	public CozinhaDTO buscarPorId(@PathVariable Long id) {
 
+		Cozinha cozinha =  cadastroCozinhaService.buscarOuFalhar(id);
+		CozinhaDTO dto = cozinhaDTOConverter.getCozinhaDTO(cozinha);
+
+		  return dto;
 
 	}
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
-	public Cozinha salvar(@RequestBody @Valid Cozinha cozinha){
-		return cadastroCozinhaService.salvar(cozinha);
+	public CozinhaDTO salvar(@RequestBody @Valid CozinhaDTOInput cozinhaInput){
+		Cozinha cozinha = cozinhaDomain.objectToDomain(cozinhaInput);
+		return cozinhaDTOConverter.getCozinhaDTO(cadastroCozinhaService.salvar(cozinha));
 	}
 
 	@PutMapping("/{cozinhaId}")
-	public Cozinha atualizar(@PathVariable Long cozinhaId, @RequestBody @Valid Cozinha cozinha){
+	public CozinhaDTO atualizar(@PathVariable Long cozinhaId, @RequestBody @Valid CozinhaDTOInput cozinhaDTOInput){
 		 Cozinha cozinhaAtual = cadastroCozinhaService.buscarOuFalhar(cozinhaId);
-
-			BeanUtils.copyProperties(cozinha, cozinhaAtual, "id");
-
-			return cadastroCozinhaService.salvar(cozinhaAtual);
-
+		 cozinhaDomain.copyToDomainObject(cozinhaDTOInput,cozinhaAtual);
+		 return cozinhaDTOConverter.getCozinhaDTO(cadastroCozinhaService.salvar(cozinhaAtual));
+//			BeanUtils.copyProperties(cozinha, cozinhaAtual, "id");
 
 	}
 

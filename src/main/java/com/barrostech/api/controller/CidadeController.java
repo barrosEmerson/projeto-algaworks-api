@@ -1,5 +1,9 @@
 package com.barrostech.api.controller;
 
+import com.barrostech.api.converter.CidadeDTOConverter;
+import com.barrostech.api.converter.CidadeDTOtoCidadeDomain;
+import com.barrostech.api.dto.CidadeDTO;
+import com.barrostech.api.input.CidadeDTOInput;
 import com.barrostech.domain.exception.EntidadeNaoEncontradaException;
 import com.barrostech.domain.exception.EstadoNaoEncontradoException;
 import com.barrostech.domain.exception.NegocioException;
@@ -23,26 +27,34 @@ public class CidadeController {
 
     @Autowired
     private CadastroCidadeService cadastroCidade;
+    @Autowired
+    private CidadeDTOConverter cidadeDTOConverter;
+
+    @Autowired
+    private CidadeDTOtoCidadeDomain cidadeDomain;
 
     @GetMapping
-    public List<Cidade> listar() {
-        return cidadeRepository.findAll();
+    public List<CidadeDTO> listar() {
+
+        return cidadeDTOConverter.getListCidadeDTO(cidadeRepository.findAll());
     }
 
     @GetMapping("/{cidadeId}")
-    public Cidade buscar(@PathVariable Long cidadeId) {
-        return cadastroCidade.buscarOuFalhar(cidadeId);
+    public CidadeDTO buscar(@PathVariable Long cidadeId) {
+
+         CidadeDTO cidadeDTO = cidadeDTOConverter.getCidadeDTO(cadastroCidade.buscarOuFalhar(cidadeId));
+         return cidadeDTO;
     }
 
 
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Cidade adicionar(@RequestBody @Valid Cidade cidade) {
-
+    public CidadeDTO adicionar(@RequestBody @Valid CidadeDTOInput dtoInput) {
+        Cidade cidade = cidadeDomain.toDomain(dtoInput);
 
         try {
-            return cadastroCidade.salvar(cidade);
+            return cidadeDTOConverter.getCidadeDTO(cadastroCidade.salvar(cidade));
         }catch (EstadoNaoEncontradoException e){
             throw new NegocioException(e.getMessage(),e);
         }
@@ -50,16 +62,15 @@ public class CidadeController {
 
 
     @PutMapping("/{cidadeId}")
-    public Cidade atualizar(@PathVariable Long cidadeId,
-                            @RequestBody @Valid Cidade cidade) {
+    public CidadeDTO atualizar(@PathVariable Long cidadeId,
+                            @RequestBody @Valid CidadeDTOInput dtoInput) {
 
 
         try {
             Cidade cidadeAtual = cadastroCidade.buscarOuFalhar(cidadeId);
+            cidadeDomain.copyToDomainObject(dtoInput, cidadeAtual);
 
-            System.out.println(cidadeAtual);
-            BeanUtils.copyProperties(cidade, cidadeAtual, "id");
-            return cadastroCidade.salvar(cidadeAtual);
+            return cidadeDTOConverter.getCidadeDTO(cadastroCidade.salvar(cidadeAtual));
         }catch (EstadoNaoEncontradoException e){
             throw new NegocioException(e.getMessage(), e);
         }

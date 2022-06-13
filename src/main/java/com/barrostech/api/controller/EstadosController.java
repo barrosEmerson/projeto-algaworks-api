@@ -3,6 +3,10 @@ package com.barrostech.api.controller;
 import java.util.List;
 import java.util.Optional;
 
+import com.barrostech.api.converter.EstadoDTOConverter;
+import com.barrostech.api.converter.EstadoDTOtoEstadoDomain;
+import com.barrostech.api.dto.EstadoDTO;
+import com.barrostech.api.input.EstadoDTOInput;
 import com.barrostech.domain.exception.EntidadeEmUsoException;
 import com.barrostech.domain.services.CadastroEstadoService;
 import org.springframework.beans.BeanUtils;
@@ -24,28 +28,30 @@ public class EstadosController {
 	private EstadoRepository estadoRepository;
 	@Autowired
 	private CadastroEstadoService cadastroEstadoService;
+	@Autowired
+	private EstadoDTOConverter estadoDTOConverter;
+	@Autowired
+	private EstadoDTOtoEstadoDomain estadoDomain;
 	
 	@GetMapping
-	public List<Estado> listar(){
-		return estadoRepository.findAll();
+	public List<EstadoDTO> listar(){
+
+		return estadoDTOConverter.getListEstadoDTO(estadoRepository.findAll());
 	}
 
 	@GetMapping("/{estadoId}")
-	public Estado buscar(@PathVariable Long estadoId){
-		return cadastroEstadoService.buscarOuFalhar(estadoId);
+	public EstadoDTO buscar(@PathVariable Long estadoId){
+		return estadoDTOConverter.getEstadoDTO(cadastroEstadoService.buscarOuFalhar(estadoId));
 
 	}
 
 	@PutMapping("/{estadoId}")
-	public Estado atualizar(@PathVariable Long estadoId, @RequestBody Estado estado){
+	public EstadoDTO atualizar(@PathVariable Long estadoId, @RequestBody EstadoDTOInput estadoInput){
+
 		Estado estadoAtual = cadastroEstadoService.buscarOuFalhar(estadoId);
+		estadoDomain.copyToDomainObject(estadoInput, estadoAtual);
 
-
-			BeanUtils.copyProperties(estado, estadoAtual,"id");
-
-			return cadastroEstadoService.salvar(estadoAtual);
-
-
+			return estadoDTOConverter.getEstadoDTO(cadastroEstadoService.salvar(estadoAtual));
 
 	}
 
@@ -54,7 +60,8 @@ public class EstadosController {
 		cadastroEstadoService.excluir(estadoId);
 	}
 	@PostMapping
-	public Estado adicionar(@RequestBody @Valid Estado estado){
-		return cadastroEstadoService.salvar(estado);
+	public EstadoDTO adicionar(@RequestBody @Valid EstadoDTOInput estadoDTOInput){
+		Estado estado = estadoDomain.dtoToDomain(estadoDTOInput);
+		return estadoDTOConverter.getEstadoDTO(cadastroEstadoService.salvar(estado));
 	}
 }

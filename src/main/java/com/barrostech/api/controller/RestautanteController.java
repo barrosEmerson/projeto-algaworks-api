@@ -1,5 +1,7 @@
 package com.barrostech.api.controller;
 
+import com.barrostech.api.converter.RestauranteDTOConverter;
+import com.barrostech.api.converter.RestauranteDTOtoRestautanteDomain;
 import com.barrostech.api.dto.CozinhaDTO;
 import com.barrostech.api.dto.RestauranteDTO;
 import com.barrostech.api.input.RestauranteDTOInput;
@@ -42,16 +44,22 @@ public class RestautanteController {
     @Autowired
     private SmartValidator validator;
 
+    @Autowired
+    private RestauranteDTOConverter converter;
+
+    @Autowired
+    private RestauranteDTOtoRestautanteDomain restautanteDomain;
+
     @GetMapping
     public List<RestauranteDTO> lista(){
-        return getListRestauranteDTO(restauranteRepository.findAll());
+        return converter.getListRestauranteDTO(restauranteRepository.findAll());
     }
 
     @GetMapping("/{restauranteId}")
     public RestauranteDTO buscar(@PathVariable Long restauranteId){
 
         Restaurante restaurante = cadastroRestauranteService.buscarOuFalhar(restauranteId);
-        RestauranteDTO restauranteDto = getRestauranteDTO(restaurante);
+        RestauranteDTO restauranteDto = converter.getRestauranteDTO(restaurante);
 
         return restauranteDto;
 
@@ -61,9 +69,9 @@ public class RestautanteController {
 
     @PostMapping
     public RestauranteDTO adicionar(@RequestBody @Valid RestauranteDTOInput restauranteDTOInput){
-        Restaurante restaurante = toDomainObeject(restauranteDTOInput);
+        Restaurante restaurante = restautanteDomain.toDomainObeject(restauranteDTOInput);
         try {
-            return getRestauranteDTO(cadastroRestauranteService.salvar(restaurante));
+            return converter.getRestauranteDTO(cadastroRestauranteService.salvar(restaurante));
         }catch (EntidadeNaoEncontradaException e){
             throw new NegocioException(e.getMessage());
         }
@@ -74,13 +82,11 @@ public class RestautanteController {
     public RestauranteDTO atualizar(@PathVariable  Long restauranteId,
                                        @RequestBody @Valid RestauranteDTOInput restauranteDTOInput) {
             Restaurante restauranteAtual = cadastroRestauranteService.buscarOuFalhar(restauranteId);
-            Restaurante restaurante = toDomainObeject(restauranteDTOInput);
 
-
-                BeanUtils.copyProperties(restaurante, restauranteAtual, "id","formasPagamento","endereco","dataCadastro");
+                    restautanteDomain.copyToDomainObject(restauranteDTOInput,restauranteAtual);
 
                 try {
-                    return getRestauranteDTO(cadastroRestauranteService.salvar(restauranteAtual));
+                    return converter.getRestauranteDTO(cadastroRestauranteService.salvar(restauranteAtual));
 
                 }catch (CozinhaNaoEncontradaException e){
                     throw new NegocioException(e.getMessage());
@@ -142,33 +148,7 @@ public class RestautanteController {
 
     }
 
-    private RestauranteDTO getRestauranteDTO(Restaurante restaurante) {
-        RestauranteDTO restauranteDto = new RestauranteDTO();
-        CozinhaDTO cozinhaDTO = new CozinhaDTO();
-        cozinhaDTO.setId(restaurante.getCozinha().getId());
-        cozinhaDTO.setNome(restaurante.getCozinha().getNome());
 
-        restauranteDto.setId(restaurante.getId());
-        restauranteDto.setNome(restaurante.getNome());
-        restauranteDto.setTaxaFrete(restaurante.getTaxaFrete());
-        restauranteDto.setCozinha(cozinhaDTO);
-        return restauranteDto;
-    }
 
-    private List<RestauranteDTO> getListRestauranteDTO(List<Restaurante> restaurantes){
-        return restaurantes.stream().map(restaurante -> getRestauranteDTO(restaurante)).collect(Collectors.toList());
-    }
 
-    private Restaurante toDomainObeject(RestauranteDTOInput dtoInput){
-        Restaurante restaurante = new Restaurante();
-        restaurante.setNome(dtoInput.getNome());
-        restaurante.setTaxaFrete(dtoInput.getTaxaFrete());
-
-        Cozinha cozinha = new Cozinha();
-        cozinha.setId(dtoInput.getCozinha().getId());
-
-        restaurante.setCozinha(cozinha);
-
-        return restaurante;
-    }
 }
