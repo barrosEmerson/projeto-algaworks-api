@@ -3,12 +3,10 @@ package com.barrostech.domain.repository;
 import java.util.List;
 
 import com.barrostech.domain.model.FormaPagamento;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface FormaPagamentoRepository {
+public interface FormaPagamentoRepository extends JpaRepository<FormaPagamento, Long> {
 	
-	List<FormaPagamento> todas();
-	FormaPagamento buscar(Long id);
-	FormaPagamento salvar(FormaPagamento formaPagamento);
-	void remover(FormaPagamento formaPagamento);
+
 
 }

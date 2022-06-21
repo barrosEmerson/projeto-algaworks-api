@@ -1,4 +1,5 @@
-HELP.md
+0,
+hs_err_pid7960.log\HELP.md
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
