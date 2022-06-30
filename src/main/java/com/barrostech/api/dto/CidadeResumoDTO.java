@@ -1,14 +1,13 @@
 package com.barrostech.api.dto;
 
-import com.barrostech.api.input.EstadoIdDTO;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class CidadeDTO {
+public class CidadeResumoDTO {
 
     private Long id;
     private String nome;
-    private EstadoDTO estado;
+    private String nomeEstado;
 }

@@ -28,4 +28,8 @@ public class RestauranteDTOInput {
     @ConvertGroup(from = Default.class, to = Groups.CozinhaId.class)
     @NotNull
     private CozinhaIdDTOInput cozinha;
+
+    @Valid
+    @NotNull
+    private EnderecoDTOInput endereco;
 }

@@ -6,6 +6,7 @@ import com.barrostech.api.dto.CozinhaDTO;
 import com.barrostech.api.dto.RestauranteDTO;
 import com.barrostech.api.input.RestauranteDTOInput;
 import com.barrostech.core.validation.ValidacaoException;
+import com.barrostech.domain.exception.CidadeNaoEncontradaException;
 import com.barrostech.domain.exception.CozinhaNaoEncontradaException;
 import com.barrostech.domain.exception.EntidadeNaoEncontradaException;
 import com.barrostech.domain.exception.NegocioException;
@@ -73,7 +74,7 @@ public class RestautanteController {
         Restaurante restaurante = restautanteDomain.toDomainObeject(restauranteDTOInput);
         try {
             return converter.getRestauranteDTO(cadastroRestauranteService.salvar(restaurante));
-        }catch (EntidadeNaoEncontradaException e){
+        }catch (CozinhaNaoEncontradaException | CidadeNaoEncontradaException e){
             throw new NegocioException(e.getMessage());
         }
 
@@ -89,7 +90,7 @@ public class RestautanteController {
                 try {
                     return converter.getRestauranteDTO(cadastroRestauranteService.salvar(restauranteAtual));
 
-                }catch (CozinhaNaoEncontradaException e){
+                }catch (CozinhaNaoEncontradaException | CidadeNaoEncontradaException e){
                     throw new NegocioException(e.getMessage());
                 }
 

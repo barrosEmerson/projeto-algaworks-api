@@ -2,6 +2,7 @@ package com.barrostech.domain.services;
 
 import com.barrostech.domain.exception.EntidadeNaoEncontradaException;
 import com.barrostech.domain.exception.RestauranteNaoEncontradoException;
+import com.barrostech.domain.model.Cidade;
 import com.barrostech.domain.model.Cozinha;
 import com.barrostech.domain.model.Restaurante;
 import com.barrostech.domain.repository.CozinhaRepository;
@@ -21,14 +22,19 @@ public class CadastroRestauranteService {
     private CozinhaRepository cozinhaRepository;
     @Autowired
     private CadastroCozinhaService cadastroCozinhaService;
-
+    @Autowired
+    private CadastroCidadeService cadastroCidadeService;
     @Transactional
     public Restaurante salvar(Restaurante restaurante){
         Long cozinhaId = restaurante.getCozinha().getId();
 
+        Long cidadeId = restaurante.getEndereco().getCidade().getId();
+
         Cozinha cozinha = cadastroCozinhaService.buscarOuFalhar(cozinhaId);
+        Cidade cidade = cadastroCidadeService.buscarOuFalhar(cidadeId);
 
         restaurante.setCozinha(cozinha);
+        restaurante.getEndereco().setCidade(cidade);
 
         return restauranteRepository.save(restaurante);
     }
