@@ -11,7 +11,8 @@ public enum ProblemType {
     ERRO_NO_SISTEMA("/erro-interno-sistema","Erro interno do sistema"),
     DADOS_INVALIDOS("/dados-invalidos","Dados inválidos"),
     ENTIDADE_EM_USO("/entidade-em-uso","Entidade em uso"),
-    ERRO_NEGOCIO("/erro-negocio","Violação na regra de negócio");
+    ERRO_NEGOCIO("/erro-negocio","Violação na regra de negócio"),
+    SENHA_INCORRETA("/erro-senha","Senha atual esta incorreta");
 
 
     private String uri;

@@ -2,7 +2,7 @@ package com.barrostech.domain.services;
 
 import com.barrostech.domain.exception.EntidadeEmUsoException;
 import com.barrostech.domain.exception.EstadoNaoEncontradoException;
-import com.barrostech.domain.exception.GrupoNaoEncontrado;
+import com.barrostech.domain.exception.GrupoNaoEncontradoException;
 import com.barrostech.domain.model.Grupo;
 import com.barrostech.domain.repository.GrupoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +38,7 @@ public class CadastroGrupoService {
 
     public Grupo buscarOuFalhar(Long grupoId){
         return grupoRepository.findById(grupoId).orElseThrow(
-                () -> new GrupoNaoEncontrado(grupoId)
+                () -> new GrupoNaoEncontradoException(grupoId)
         );
     }
 

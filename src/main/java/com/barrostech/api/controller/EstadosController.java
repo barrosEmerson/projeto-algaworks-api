@@ -1,18 +1,13 @@
 package com.barrostech.api.controller;
 
 import java.util.List;
-import java.util.Optional;
 
-import com.barrostech.api.converter.EstadoDTOConverter;
-import com.barrostech.api.converter.EstadoDTOtoEstadoDomain;
+import com.barrostech.api.model.converter.EstadoDTOConverter;
+import com.barrostech.api.model.converter.EstadoDTOtoEstadoDomain;
 import com.barrostech.api.dto.EstadoDTO;
 import com.barrostech.api.input.EstadoDTOInput;
-import com.barrostech.domain.exception.EntidadeEmUsoException;
 import com.barrostech.domain.services.CadastroEstadoService;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.barrostech.domain.model.Estado;

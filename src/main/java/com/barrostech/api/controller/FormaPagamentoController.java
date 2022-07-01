@@ -1,7 +1,7 @@
 package com.barrostech.api.controller;
 
-import com.barrostech.api.converter.FormaPagamentoDTOConverter;
-import com.barrostech.api.converter.FormaPagamentoDTOtoDomain;
+import com.barrostech.api.model.converter.FormaPagamentoDTOConverter;
+import com.barrostech.api.model.converter.FormaPagamentoDTOtoDomain;
 import com.barrostech.api.dto.FormaPagamentoDTO;
 import com.barrostech.api.input.FormaPagamentoDTOInput;
 import com.barrostech.domain.model.FormaPagamento;

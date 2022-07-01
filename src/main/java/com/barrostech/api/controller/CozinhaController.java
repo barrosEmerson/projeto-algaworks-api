@@ -1,20 +1,15 @@
 package com.barrostech.api.controller;
 
 import java.util.List;
-import java.util.Optional;
 
-import com.barrostech.api.converter.CozinhaDTOConverter;
-import com.barrostech.api.converter.CozinhaDTOtoCozinhaDomain;
+import com.barrostech.api.model.converter.CozinhaDTOConverter;
+import com.barrostech.api.model.converter.CozinhaDTOtoCozinhaDomain;
 import com.barrostech.api.dto.CozinhaDTO;
 import com.barrostech.api.input.CozinhaDTOInput;
-import com.barrostech.domain.exception.EntidadeEmUsoException;
-import com.barrostech.domain.exception.EntidadeNaoEncontradaException;
 import com.barrostech.domain.services.CadastroCozinhaService;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.barrostech.domain.model.Cozinha;

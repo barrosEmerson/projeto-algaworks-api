@@ -1,7 +1,7 @@
 package com.barrostech.api.controller;
 
-import com.barrostech.api.converter.GrupoDTOConverter;
-import com.barrostech.api.converter.GrupoDTOtoGrupoDomain;
+import com.barrostech.api.model.converter.GrupoDTOConverter;
+import com.barrostech.api.model.converter.GrupoDTOtoGrupoDomain;
 import com.barrostech.api.dto.GrupoDTO;
 import com.barrostech.api.input.GrupoDTOInput;
 import com.barrostech.domain.model.Grupo;

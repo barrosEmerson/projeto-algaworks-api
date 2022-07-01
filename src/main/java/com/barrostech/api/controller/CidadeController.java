@@ -1,16 +1,14 @@
 package com.barrostech.api.controller;
 
-import com.barrostech.api.converter.CidadeDTOConverter;
-import com.barrostech.api.converter.CidadeDTOtoCidadeDomain;
+import com.barrostech.api.model.converter.CidadeDTOConverter;
+import com.barrostech.api.model.converter.CidadeDTOtoCidadeDomain;
 import com.barrostech.api.dto.CidadeDTO;
 import com.barrostech.api.input.CidadeDTOInput;
-import com.barrostech.domain.exception.EntidadeNaoEncontradaException;
 import com.barrostech.domain.exception.EstadoNaoEncontradoException;
 import com.barrostech.domain.exception.NegocioException;
 import com.barrostech.domain.model.Cidade;
 import com.barrostech.domain.repository.CidadeRepository;
 import com.barrostech.domain.services.CadastroCidadeService;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;

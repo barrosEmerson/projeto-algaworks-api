@@ -1,4 +1,4 @@
-package com.barrostech.api.converter;
+package com.barrostech.api.model.converter;
 
 import com.barrostech.api.dto.EstadoDTO;
 import com.barrostech.domain.model.Estado;

@@ -1,29 +1,23 @@
 package com.barrostech.api.controller;
 
-import com.barrostech.api.converter.RestauranteDTOConverter;
-import com.barrostech.api.converter.RestauranteDTOtoRestautanteDomain;
-import com.barrostech.api.dto.CozinhaDTO;
+import com.barrostech.api.model.converter.RestauranteDTOConverter;
+import com.barrostech.api.model.converter.RestauranteDTOtoRestautanteDomain;
 import com.barrostech.api.dto.RestauranteDTO;
 import com.barrostech.api.input.RestauranteDTOInput;
-import com.barrostech.core.validation.ValidacaoException;
 import com.barrostech.domain.exception.CidadeNaoEncontradaException;
 import com.barrostech.domain.exception.CozinhaNaoEncontradaException;
-import com.barrostech.domain.exception.EntidadeNaoEncontradaException;
 import com.barrostech.domain.exception.NegocioException;
-import com.barrostech.domain.model.Cozinha;
 import com.barrostech.domain.model.Restaurante;
 import com.barrostech.domain.repository.RestauranteRepository;
 import com.barrostech.domain.services.CadastroRestauranteService;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.util.ReflectionUtils;
-import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.SmartValidator;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,7 +26,6 @@ import javax.validation.Valid;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/restaurantes")

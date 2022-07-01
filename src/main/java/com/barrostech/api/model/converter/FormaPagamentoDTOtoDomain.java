@@ -1,4 +1,4 @@
-package com.barrostech.api.converter;
+package com.barrostech.api.model.converter;
 
 import com.barrostech.api.input.FormaPagamentoDTOInput;
 import com.barrostech.domain.model.FormaPagamento;

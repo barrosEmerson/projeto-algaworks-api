@@ -4,6 +4,7 @@ import com.barrostech.core.validation.ValidacaoException;
 import com.barrostech.domain.exception.EntidadeEmUsoException;
 import com.barrostech.domain.exception.EntidadeNaoEncontradaException;
 import com.barrostech.domain.exception.NegocioException;
+import com.barrostech.domain.exception.SenhasInconstantesException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.fasterxml.jackson.databind.exc.PropertyBindingException;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -189,6 +190,18 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 
         HttpStatus status = HttpStatus.BAD_REQUEST;
         ProblemType problemType = ProblemType.ERRO_NEGOCIO;
+        String detail = e.getMessage();
+        Problem problem = createProblemBuilder(status,problemType,detail).build();
+
+        return handleExceptionInternal(e, e.getMessage(), new HttpHeaders(), status,request);
+    }
+
+    @ExceptionHandler(SenhasInconstantesException.class)
+    public ResponseEntity<?> handleSenhasInconstanteException(
+            NegocioException e, WebRequest request){
+
+        HttpStatus status = HttpStatus.BAD_REQUEST;
+        ProblemType problemType = ProblemType.SENHA_INCORRETA;
         String detail = e.getMessage();
         Problem problem = createProblemBuilder(status,problemType,detail).build();
 
