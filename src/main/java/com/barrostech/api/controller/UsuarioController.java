@@ -3,10 +3,9 @@ package com.barrostech.api.controller;
 import com.barrostech.api.dto.UsuarioDTO;
 import com.barrostech.api.input.UsuarioDTOInput;
 import com.barrostech.api.input.UsuarioDTOInputUpdate;
+import com.barrostech.api.input.UsuarioDTOPasswordInput;
 import com.barrostech.api.model.converter.UsuarioDTOConverter;
-import com.barrostech.api.model.converter.UsuarioDTOPasswordInput;
 import com.barrostech.api.model.converter.UsuarioDTOtoUsuarioDomain;
-import com.barrostech.domain.exception.SenhasInconstantesException;
 import com.barrostech.domain.model.Usuario;
 import com.barrostech.domain.repository.UsuarioRepository;
 import com.barrostech.domain.services.CadastroUsuarioService;
@@ -51,25 +50,15 @@ public class UsuarioController {
     }
 
     @PutMapping("/{usuarioId}")
-    public UsuarioDTO atualizar(@PathVariable Long usuarioId, @RequestBody UsuarioDTOInputUpdate dtoInput) {
+    public UsuarioDTO atualizar(@PathVariable Long usuarioId, @RequestBody @Valid UsuarioDTOInputUpdate dtoInput) {
         Usuario usuarioAtual = usuarioService.buscarOuFalhar(usuarioId);
         domain.copyToDomainObject(dtoInput, usuarioAtual);
         return dtoConverter.getUsuarioDTO(usuarioService.salvar(usuarioAtual));
     }
 
     @PutMapping("/{usuarioId}/senha")
-    public UsuarioDTO atualizarSenha(@PathVariable Long usuarioId, @RequestBody UsuarioDTOPasswordInput dtoInput) {
-        Usuario usuarioAtual = usuarioService.buscarOuFalhar(usuarioId);
-
-
-            if (usuarioAtual.getSenha().equals(dtoInput.getSenhaAtual())) {
-                usuarioAtual.setSenha(dtoInput.getNovaSenha());
-                return dtoConverter.getUsuarioDTO(usuarioService.salvar(usuarioAtual));
-            }else{
-
-                throw new SenhasInconstantesException("Senha atual está incorreta");
-            }
-
-
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void atualizarSenha(@PathVariable Long usuarioId, @RequestBody @Valid UsuarioDTOPasswordInput dtoInput) {
+            usuarioService.alterarSenha(usuarioId, dtoInput.getSenhaAtual(),dtoInput.getNovaSenha());
     }
 }

@@ -1,4 +1,4 @@
-package com.barrostech.api.model.converter;
+package com.barrostech.api.input;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -2,6 +2,7 @@ package com.barrostech.api.model.converter;
 
 import com.barrostech.api.input.UsuarioDTOInput;
 import com.barrostech.api.input.UsuarioDTOInputUpdate;
+import com.barrostech.api.input.UsuarioDTOPasswordInput;
 import com.barrostech.domain.model.Usuario;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
