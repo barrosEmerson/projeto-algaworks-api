@@ -6,6 +6,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,7 +20,7 @@ public class FormaPagamentoDTOConverter {
         return modelMapper.map(formaPagamento, FormaPagamentoDTO.class);
     }
 
-    public List<FormaPagamentoDTO> getListFormaPagamentoDTO(List<FormaPagamento>formaPagamentos){
+    public List<FormaPagamentoDTO> getListFormaPagamentoDTO(Collection<FormaPagamento> formaPagamentos){
         return formaPagamentos.stream().map(formaPagamento -> getFormaPagamentoDTO(formaPagamento)).collect(Collectors.toList());
     }
 }

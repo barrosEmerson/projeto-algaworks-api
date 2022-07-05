@@ -3,7 +3,9 @@ package com.barrostech.domain.model;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.*;
 import javax.validation.Valid;
@@ -67,7 +69,7 @@ public class Restaurante {
 	@JoinTable(name = "restaurante_forma_pagamento",
 			joinColumns = @JoinColumn(name = "restaurante_id"),
 			inverseJoinColumns = @JoinColumn(name = "forma_pagamento_id"))
-	private List<FormaPagamento> formasPagamento = new ArrayList<>();
+	private Set<FormaPagamento> formasPagamento = new HashSet<>();
 
 
 	public void ativar(){
@@ -77,6 +79,13 @@ public class Restaurante {
 	public void inativar(){
 		setAtivo(false);
 	}
-	
+
+	public boolean removerFormaPagamento(FormaPagamento formaPagamento){
+		return getFormasPagamento().remove(formaPagamento);
+	}
+
+	public boolean associarFormaPagamento(FormaPagamento formaPagamento){
+		return getFormasPagamento().add(formaPagamento);
+	}
 	
 }
