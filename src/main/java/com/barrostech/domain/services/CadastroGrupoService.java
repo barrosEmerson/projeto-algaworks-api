@@ -4,7 +4,9 @@ import com.barrostech.domain.exception.EntidadeEmUsoException;
 import com.barrostech.domain.exception.EstadoNaoEncontradoException;
 import com.barrostech.domain.exception.GrupoNaoEncontradoException;
 import com.barrostech.domain.model.Grupo;
+import com.barrostech.domain.model.Permissao;
 import com.barrostech.domain.repository.GrupoRepository;
+import com.barrostech.domain.repository.PermissaoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -17,6 +19,8 @@ public class CadastroGrupoService {
     private static final String MSG_GRUPO_EM_USO = "O grupo de código %d está em uso.";
     @Autowired
     private GrupoRepository grupoRepository;
+    @Autowired
+    private CadastroPermissaoService cadastroPermissaoService;
 
     @Transactional
     public Grupo salvar(Grupo grupo){
@@ -42,4 +46,20 @@ public class CadastroGrupoService {
         );
     }
 
+    @Transactional
+    public void desassociarPermissao(Long grupoId, Long permissaoId){
+        Permissao permissao = cadastroPermissaoService.buscarOuFalhar(permissaoId);
+        Grupo grupo = buscarOuFalhar(grupoId);
+
+        grupo.remover(permissao);
+
+    }
+    @Transactional
+    public void associarPermissao(Long grupoId, Long permissaoId){
+        Grupo grupo = buscarOuFalhar(grupoId);
+        Permissao permissao = cadastroPermissaoService.buscarOuFalhar(permissaoId);
+
+        grupo.adicionar(permissao);
+
+    }
 }

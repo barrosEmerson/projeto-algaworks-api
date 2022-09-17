@@ -86,9 +86,9 @@ public class RestautanteController {
                 }catch (CozinhaNaoEncontradaException | CidadeNaoEncontradaException e){
                     throw new NegocioException(e.getMessage());
                 }
-
-
     }
+
+
 
 //    @PatchMapping("/{restauranteId}")
 //    public RestauranteDTO atualizarParcial(@PathVariable Long restauranteId,
@@ -155,6 +155,16 @@ public class RestautanteController {
         cadastroRestauranteService.inativar(restauranteId);
     }
 
+    @PutMapping("/{restauranteId}/fechamento")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void fecharRestaurante(@PathVariable  Long restauranteId) {
+        cadastroRestauranteService.fecharRestaurante(restauranteId);
+    }
 
+    @PutMapping("/{restauranteId}/abertura")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void abrirRestaurante(@PathVariable  Long restauranteId) {
+        cadastroRestauranteService.abrirRestaurante(restauranteId);
+    }
 
 }

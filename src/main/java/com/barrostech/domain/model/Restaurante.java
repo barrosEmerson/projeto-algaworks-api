@@ -71,6 +71,8 @@ public class Restaurante {
 			inverseJoinColumns = @JoinColumn(name = "forma_pagamento_id"))
 	private Set<FormaPagamento> formasPagamento = new HashSet<>();
 
+	private Boolean aberto = Boolean.TRUE;
+
 
 	public void ativar(){
 		setAtivo(true);
@@ -80,12 +82,28 @@ public class Restaurante {
 		setAtivo(false);
 	}
 
+	public void abrir(){
+		setAberto(true);
+	}
+
+	public void fechar(){
+		setAberto(false);
+	}
+
 	public boolean removerFormaPagamento(FormaPagamento formaPagamento){
 		return getFormasPagamento().remove(formaPagamento);
 	}
 
 	public boolean associarFormaPagamento(FormaPagamento formaPagamento){
 		return getFormasPagamento().add(formaPagamento);
+	}
+
+	public boolean removerProduto(Produto produto){
+		return getProdutos().remove(produto);
+	}
+
+	public boolean adicionarProduto(Produto produto){
+		return getProdutos().add(produto);
 	}
 	
 }

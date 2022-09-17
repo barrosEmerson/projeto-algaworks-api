@@ -1,18 +1,15 @@
 package com.barrostech.domain.services;
 
 import com.barrostech.domain.exception.RestauranteNaoEncontradoException;
-import com.barrostech.domain.model.Cidade;
-import com.barrostech.domain.model.Cozinha;
-import com.barrostech.domain.model.FormaPagamento;
-import com.barrostech.domain.model.Restaurante;
+import com.barrostech.domain.model.*;
 import com.barrostech.domain.repository.CozinhaRepository;
+import com.barrostech.domain.repository.ProdutoRepository;
 import com.barrostech.domain.repository.RestauranteRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CadastroRestauranteService {
@@ -29,6 +26,11 @@ public class CadastroRestauranteService {
     private CadastroCidadeService cadastroCidadeService;
     @Autowired
     private CadastroFormaPagamentoService cadastroFormaPagamentoService;
+
+    @Autowired
+    private ProdutoRepository produtoRepository;
+    @Autowired
+    private CadastroProdutoService cadastroProdutoService;
     @Transactional
     public Restaurante salvar(Restaurante restaurante){
         Long cozinhaId = restaurante.getCozinha().getId();
@@ -71,14 +73,26 @@ public class CadastroRestauranteService {
         restaurante.removerFormaPagamento(formaPagamento);
 
     }
-
     @Transactional
     public void associarFormaPagamento(Long restauranteId, Long formaPagamentoId){
         Restaurante restaurante = buscarOuFalhar(restauranteId);
         FormaPagamento formaPagamento = cadastroFormaPagamentoService.buscarOuFalhar(formaPagamentoId);
 
-
         restaurante.associarFormaPagamento(formaPagamento);
 
     }
+    @Transactional
+    public void abrirRestaurante(Long restauranteId){
+        Restaurante restaurante = buscarOuFalhar(restauranteId);
+
+        restaurante.abrir();
+    }
+
+    @Transactional
+    public void fecharRestaurante(Long restauranteId){
+        Restaurante restaurante = buscarOuFalhar(restauranteId);
+
+        restaurante.fechar();
+    }
+
 }
