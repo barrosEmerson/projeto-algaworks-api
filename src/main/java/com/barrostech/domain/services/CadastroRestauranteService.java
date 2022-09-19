@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -31,6 +32,11 @@ public class CadastroRestauranteService {
     private ProdutoRepository produtoRepository;
     @Autowired
     private CadastroProdutoService cadastroProdutoService;
+
+    @Autowired
+    private CadastroUsuarioService cadastroUsuarioService;
+
+
     @Transactional
     public Restaurante salvar(Restaurante restaurante){
         Long cozinhaId = restaurante.getCozinha().getId();
@@ -58,6 +64,15 @@ public class CadastroRestauranteService {
         Restaurante restauranteAtual = buscarOuFalhar(restauranteId);
 
         restauranteAtual.inativar();
+    }
+    @Transactional
+    public void ativar(List<Long>restauranteIds){
+        restauranteIds.forEach(this::ativar);
+    }
+
+    @Transactional
+    public void inativar(List<Long>restauranteIds){
+        restauranteIds.forEach(this::inativar);
     }
 
     public Restaurante buscarOuFalhar(Long restauranteId){
@@ -93,6 +108,22 @@ public class CadastroRestauranteService {
         Restaurante restaurante = buscarOuFalhar(restauranteId);
 
         restaurante.fechar();
+    }
+
+    @Transactional
+    public void adicionarReponsavel(Long restauranteId, Long usuarioId){
+        Restaurante restaurante = buscarOuFalhar(restauranteId);
+        Usuario usuario = cadastroUsuarioService.buscarOuFalhar(usuarioId);
+
+        restaurante.adicionarResponsavel(usuario);
+    }
+
+    @Transactional
+    public void removerReponsavel(Long restauranteId, Long usuarioId){
+        Restaurante restaurante = buscarOuFalhar(restauranteId);
+        Usuario usuario = cadastroUsuarioService.buscarOuFalhar(usuarioId);
+
+        restaurante.removerResponsavel(usuario);
     }
 
 }

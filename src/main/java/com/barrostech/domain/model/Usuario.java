@@ -40,4 +40,12 @@ public class Usuario {
     public boolean senhaConferem(String senha){
         return getSenha().equals(senha);
     }
+
+    public boolean adicionar(Grupo grupo){
+        return getGrupos().add(grupo);
+    }
+
+    public boolean remover(Grupo grupo){
+        return getGrupos().remove(grupo);
+    }
 }

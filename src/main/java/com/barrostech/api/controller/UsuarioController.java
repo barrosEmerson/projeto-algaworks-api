@@ -1,9 +1,11 @@
 package com.barrostech.api.controller;
 
+import com.barrostech.api.dto.GrupoDTO;
 import com.barrostech.api.dto.UsuarioDTO;
 import com.barrostech.api.input.UsuarioDTOInput;
 import com.barrostech.api.input.UsuarioDTOInputUpdate;
 import com.barrostech.api.input.UsuarioDTOPasswordInput;
+import com.barrostech.api.model.converter.GrupoDTOConverter;
 import com.barrostech.api.model.converter.UsuarioDTOConverter;
 import com.barrostech.api.model.converter.UsuarioDTOtoUsuarioDomain;
 import com.barrostech.domain.model.Usuario;
@@ -25,6 +27,8 @@ public class UsuarioController {
 
     @Autowired
     private UsuarioDTOConverter dtoConverter;
+    @Autowired
+    private GrupoDTOConverter grupoDTOConverter;
 
     @Autowired
     private UsuarioRepository usuarioRepository;
@@ -61,4 +65,24 @@ public class UsuarioController {
     public void atualizarSenha(@PathVariable Long usuarioId, @RequestBody @Valid UsuarioDTOPasswordInput dtoInput) {
             usuarioService.alterarSenha(usuarioId, dtoInput.getSenhaAtual(),dtoInput.getNovaSenha());
     }
+    @GetMapping("/{usuarioId}/grupos")
+    public List<GrupoDTO> listarGruposByUser(@PathVariable Long usuarioId){
+        Usuario usuario = usuarioService.buscarOuFalhar(usuarioId);
+
+        return grupoDTOConverter.getListGrupoDTO(usuario.getGrupos());
+
+    }
+
+    @PutMapping("/{usuarioId}/grupos/{grupoId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void adicionarUsuarioGrupo(@PathVariable Long usuarioId, @PathVariable Long grupoId){
+        usuarioService.associarUsarioGrupo(usuarioId,grupoId);
+    }
+
+    @DeleteMapping("/{usuarioId}/grupos/{grupoId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void removerUsuarioGrupo(@PathVariable Long usuarioId, @PathVariable Long grupoId){
+        usuarioService.desassociarUsarioGrupo(usuarioId,grupoId);
+    }
+
 }

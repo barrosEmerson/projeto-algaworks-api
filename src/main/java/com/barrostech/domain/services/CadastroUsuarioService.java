@@ -1,6 +1,7 @@
 package com.barrostech.domain.services;
 
 import com.barrostech.domain.exception.*;
+import com.barrostech.domain.model.Grupo;
 import com.barrostech.domain.model.Usuario;
 import com.barrostech.domain.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,8 @@ public class CadastroUsuarioService {
 
     @Autowired
     private EntityManager manager;
+    @Autowired
+    private CadastroGrupoService cadastroGrupoService;
 
     @Transactional
     public Usuario salvar(Usuario usuario){
@@ -62,5 +65,20 @@ public class CadastroUsuarioService {
         }else {
             throw new SenhasInconstantesException("Senha atual está incorreta");
         }
+    }
+    @Transactional
+    public void associarUsarioGrupo(Long usuarioId, Long grupoId){
+        Usuario usuario = buscarOuFalhar(usuarioId);
+        Grupo grupo = cadastroGrupoService.buscarOuFalhar(grupoId);
+
+        usuario.adicionar(grupo);
+    }
+
+    @Transactional
+    public void desassociarUsarioGrupo(Long usuarioId, Long grupoId){
+        Usuario usuario = buscarOuFalhar(usuarioId);
+        Grupo grupo = cadastroGrupoService.buscarOuFalhar(grupoId);
+
+        usuario.remover(grupo);
     }
 }

@@ -7,6 +7,7 @@ import com.barrostech.api.input.RestauranteDTOInput;
 import com.barrostech.domain.exception.CidadeNaoEncontradaException;
 import com.barrostech.domain.exception.CozinhaNaoEncontradaException;
 import com.barrostech.domain.exception.NegocioException;
+import com.barrostech.domain.exception.RestauranteNaoEncontradoException;
 import com.barrostech.domain.model.Restaurante;
 import com.barrostech.domain.repository.RestauranteRepository;
 import com.barrostech.domain.services.CadastroRestauranteService;
@@ -154,7 +155,24 @@ public class RestautanteController {
     public void inativar(@PathVariable Long restauranteId){
         cadastroRestauranteService.inativar(restauranteId);
     }
-
+    @PutMapping("/ativacoes")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void ativarMultiplos(@RequestBody List<Long>restauranteIds){
+        try {
+            cadastroRestauranteService.ativar(restauranteIds);
+        }catch (RestauranteNaoEncontradoException e){
+            throw new NegocioException(e.getMessage(),e);
+        }
+    }
+    @DeleteMapping("/ativacoes")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void inativarMultiplos(@RequestBody List<Long>restauranteIds){
+        try {
+            cadastroRestauranteService.inativar(restauranteIds);
+        }catch (RestauranteNaoEncontradoException e){
+            throw new NegocioException(e.getMessage(),e);
+        }
+    }
     @PutMapping("/{restauranteId}/fechamento")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void fecharRestaurante(@PathVariable  Long restauranteId) {
