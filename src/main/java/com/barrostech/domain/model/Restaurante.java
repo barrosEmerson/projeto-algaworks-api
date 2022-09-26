@@ -19,40 +19,39 @@ import com.barrostech.core.validation.TaxaFrete;
 import com.barrostech.core.validation.ValorZeroIncluiDescricao;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 @ValorZeroIncluiDescricao(valorField = "taxaFrete", descricaoField = "nome", descricaoObrigatoria = "Frete Gratis")
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 public class Restaurante {
-	
+
 	@EqualsAndHashCode.Include
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@NotBlank
 	@Column(nullable = false)
 	private String nome;
 
-	@TaxaFrete
 	@Column(name = "taxa_frete", nullable = false)
 	private BigDecimal taxaFrete;
 
-	@Valid
-	@NotNull
 	@ManyToOne
-	@JoinColumn(name = "cozinha_id",nullable = false)
+	@JoinColumn(name = "cozinha_id", nullable = false)
 	private Cozinha cozinha;
 
 	@Embedded
 	private Endereco endereco;
 
 	private Boolean ativo = Boolean.TRUE;
+
+	private Boolean aberto = Boolean.FALSE;
 
 	@CreationTimestamp
 	@Column(nullable = false, columnDefinition = "datetime")
@@ -61,9 +60,6 @@ public class Restaurante {
 	@UpdateTimestamp
 	@Column(nullable = false, columnDefinition = "datetime")
 	private OffsetDateTime dataAtualizacao;
-
-	@OneToMany(mappedBy = "restaurante")
-	private List<Produto> produtos = new ArrayList<>();
 
 	@ManyToMany
 	@JoinTable(name = "restaurante_forma_pagamento",
@@ -77,7 +73,9 @@ public class Restaurante {
 			inverseJoinColumns = @JoinColumn(name = "usuario_id"))
 	private Set<Usuario> responsaveis = new HashSet<>();
 
-	private Boolean aberto = Boolean.TRUE;
+	@OneToMany(mappedBy = "restaurante")
+	@JsonIgnore
+	private List<Produto> produtos = new ArrayList<>();
 
 
 	public void ativar(){
@@ -118,6 +116,13 @@ public class Restaurante {
 
 	public boolean adicionarResponsavel(Usuario usuario) {
 		return getResponsaveis().add(usuario);
+	}
+
+	public boolean aceitaFormaPagamento(FormaPagamento formaPagamento){
+		return getFormasPagamento().contains(formaPagamento);
+	}
+	public boolean naoAceitaFormaPagamento(FormaPagamento formaPagamento){
+		return !aceitaFormaPagamento(formaPagamento);
 	}
 	
 }

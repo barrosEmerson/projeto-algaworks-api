@@ -15,12 +15,13 @@ import javax.validation.groups.Default;
 
 import com.barrostech.core.validation.Groups;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 
 @Entity
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
 public class Cidade {
 
 	@EqualsAndHashCode.Include

@@ -1,5 +1,6 @@
 package com.barrostech.domain.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -23,6 +24,7 @@ public class ItemPedido {
 
     @ManyToOne
     @JoinColumn(nullable = false)
+    @JsonIgnore
     private Pedido pedido;
 
     @ManyToOne
