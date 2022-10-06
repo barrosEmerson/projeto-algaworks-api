@@ -9,5 +9,5 @@ public class CidadeResumoDTO {
 
     private Long id;
     private String nome;
-    private String nomeEstado;
+    private String estado;
 }

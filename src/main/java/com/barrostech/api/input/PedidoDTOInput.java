@@ -1,14 +1,11 @@
 package com.barrostech.api.input;
 
-import com.barrostech.domain.model.*;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.CreationTimestamp;
 
-import javax.persistence.*;
-import java.math.BigDecimal;
-import java.time.OffsetDateTime;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,29 +13,19 @@ import java.util.List;
 @Setter
 public class PedidoDTOInput {
 
+    @Valid
+    @NotNull
+    private RestauranteDTOIdInput restaurante;
+    @Valid
+    @NotNull
+    private FormaPagamentoDTOIdInput formaPagamento;
 
-    private BigDecimal subTotal;
-    private BigDecimal taxaFrete;
-    private BigDecimal valorTotal;
+    @Valid
+    @NotNull
+    private EnderecoDTOInput enderecoEntrega;
 
-    @Embedded
-    private Endereco enderecoEntrega;
-
-    @Enumerated(EnumType.STRING)
-    private StatusPedido status = StatusPedido.CRIADO;
-
-    @CreationTimestamp
-    private OffsetDateTime dataCriação;
-
-    private OffsetDateTime dataConfirmacao;
-    private OffsetDateTime dataCancelamento;
-    private OffsetDateTime dataEntrega;
-
-    private FormaPagamento formaPagamento;
-
-    private Restaurante restaurante;
-
-    private Usuario cliente;
-
-    private List<ItemPedido> itens = new ArrayList<>();
+    @Valid
+    @Size(min = 1)
+    @NotNull
+    private List<ItemPedidoDTOInput> itens = new ArrayList<>();
 }

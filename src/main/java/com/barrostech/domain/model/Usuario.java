@@ -1,6 +1,7 @@
 package com.barrostech.domain.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.CreationTimestamp;
@@ -26,6 +27,11 @@ public class Usuario {
     private String email;
     @Column(nullable = false)
     private String senha;
+
+    public Usuario(){}
+    Usuario(Long id){
+        this.id = id;
+    }
 
     @CreationTimestamp
     @Column(nullable = false, columnDefinition = "datetime")
