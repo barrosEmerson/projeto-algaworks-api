@@ -12,8 +12,12 @@ import com.barrostech.domain.model.Pedido;
 import com.barrostech.domain.model.Usuario;
 import com.barrostech.domain.repository.PedidoRepository;
 import com.barrostech.domain.services.EmissaoPedidoService;
+import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
+import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -37,16 +41,34 @@ public class PedidoController {
     @Autowired
     private PedidoDTOtoDomain dtOtoDomain;
 
+
     @GetMapping
-    public List<PedidoResumoDTO> listar(){
+    public MappingJacksonValue listar(@RequestParam(required = false) String campos){
         List<Pedido> todosPedidos = pedidoRepository.findAll();
+        List<PedidoResumoDTO> pedidoResumoDTOS = pedidoResumoDTOConverter.getListPedidoDTO(todosPedidos);
 
-        return pedidoResumoDTOConverter.getListPedidoDTO(todosPedidos);
+        MappingJacksonValue pedidosWrapper = new MappingJacksonValue(pedidoResumoDTOS);
+        SimpleFilterProvider filterProvider = new SimpleFilterProvider();
+        filterProvider.addFilter("pedidoFilter", SimpleBeanPropertyFilter.serializeAll());
+
+        if(StringUtils.isNotBlank(campos)){
+            filterProvider.addFilter("pedidoFilter", SimpleBeanPropertyFilter.filterOutAllExcept(campos.split(",")));
+        }
+
+        pedidosWrapper.setFilters(filterProvider);
+
+        return pedidosWrapper;
     }
+//    @GetMapping
+//    public List<PedidoResumoDTO> listar(){
+//        List<Pedido> todosPedidos = pedidoRepository.findAll();
+//
+//        return pedidoResumoDTOConverter.getListPedidoDTO(todosPedidos);
+//    }
 
-    @GetMapping("/{pedidoId}")
-    public PedidoDTO buscar(@PathVariable Long pedidoId){
-        Pedido pedido = emissaoPedidoService.buscarOuFalhar(pedidoId);
+    @GetMapping("/{codigo}")
+    public PedidoDTO buscar(@PathVariable String codigo){
+        Pedido pedido = emissaoPedidoService.buscarOuFalhar(codigo);
 
         return dtoConverter.getPedidoDTO(pedido);
 

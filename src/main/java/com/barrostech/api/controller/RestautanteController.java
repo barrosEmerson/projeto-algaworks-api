@@ -4,6 +4,7 @@ import com.barrostech.api.model.converter.RestauranteDTOConverter;
 import com.barrostech.api.model.converter.RestauranteDTOtoRestautanteDomain;
 import com.barrostech.api.dto.RestauranteDTO;
 import com.barrostech.api.input.RestauranteDTOInput;
+import com.barrostech.api.view.RestauranteView;
 import com.barrostech.domain.exception.CidadeNaoEncontradaException;
 import com.barrostech.domain.exception.CozinhaNaoEncontradaException;
 import com.barrostech.domain.exception.NegocioException;
@@ -11,12 +12,14 @@ import com.barrostech.domain.exception.RestauranteNaoEncontradoException;
 import com.barrostech.domain.model.Restaurante;
 import com.barrostech.domain.repository.RestauranteRepository;
 import com.barrostech.domain.services.CadastroRestauranteService;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.validation.SmartValidator;
@@ -47,9 +50,32 @@ public class RestautanteController {
     private RestauranteDTOtoRestautanteDomain restautanteDomain;
 
     @GetMapping
-    public List<RestauranteDTO> lista(){
-        return converter.getListRestauranteDTO(restauranteRepository.findAll());
+    public MappingJacksonValue lista(@RequestParam(required = false) String projecao){
+        List<Restaurante> restaurantes = restauranteRepository.findAll();
+        List<RestauranteDTO> restauranteDTO = converter.getListRestauranteDTO(restaurantes);
+
+        MappingJacksonValue mappingJacksonValue = new MappingJacksonValue(restauranteDTO);
+        mappingJacksonValue.setSerializationView(RestauranteView.Resumo.class);
+        if("apenas-nome".equals(projecao)){
+            mappingJacksonValue.setSerializationView(RestauranteView.ApenasNome.class);
+        } else if ("completo".equals(projecao)) {
+            mappingJacksonValue.setSerializationView(null);
+        }
+
+        return mappingJacksonValue;
     }
+
+//    @JsonView(RestauranteView.Resumo.class)
+//    @GetMapping(params = "projecao=resumo")
+//    public List<RestauranteDTO> listarResumo(){
+//        return lista();
+//    }
+//
+//    @JsonView(RestauranteView.ApenasNome.class)
+//    @GetMapping(params = "projecao=apenas-nomes")
+//    public List<RestauranteDTO> listarRestaurantesNomes(){
+//        return lista();
+//    }
 
     @GetMapping("/{restauranteId}")
     public RestauranteDTO buscar(@PathVariable Long restauranteId){

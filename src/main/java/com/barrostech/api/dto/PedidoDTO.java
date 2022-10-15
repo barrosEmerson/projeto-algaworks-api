@@ -1,6 +1,7 @@
 package com.barrostech.api.dto;
 
 import com.barrostech.domain.model.*;
+import com.fasterxml.jackson.annotation.JsonFilter;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,11 +13,12 @@ import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+
 @Getter
 @Setter
 public class PedidoDTO {
 
-    private Long id ;
+    private String codigo ;
     private BigDecimal subtotal;
     private BigDecimal taxaFrete;
     private BigDecimal valorTotal;
