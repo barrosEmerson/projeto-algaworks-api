@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/restaurantes/{restauranteId}/produto")
+@RequestMapping("/restaurantes/{restauranteId}/produtos")
 public class RestautanteProdutosController {
 
 
@@ -35,9 +35,15 @@ public class RestautanteProdutosController {
     private ProdutoDTOtoDomain dtOtoDomain;
 
     @GetMapping
-    public List<ProdutoDTO> lista(@PathVariable Long restauranteId){
+    public List<ProdutoDTO> lista(@PathVariable Long restauranteId, @RequestParam(required = false) Boolean incluirInativos){
         Restaurante restaurante = cadastroRestauranteService.buscarOuFalhar(restauranteId);
-        List<Produto> todosProdutos = produtoRepository.findByRestaurante(restaurante);
+        List<Produto> todosProdutos = null;
+        if(incluirInativos){
+            todosProdutos = produtoRepository.findByRestaurante(restaurante);
+        }else {
+
+            todosProdutos = produtoRepository.findAtivosByRestaurante(restaurante);
+        }
         return dtoConverter.getListProdutoDTO(todosProdutos);
     }
 

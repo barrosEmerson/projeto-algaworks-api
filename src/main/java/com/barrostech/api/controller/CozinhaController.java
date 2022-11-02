@@ -8,6 +8,9 @@ import com.barrostech.api.dto.CozinhaDTO;
 import com.barrostech.api.input.CozinhaDTOInput;
 import com.barrostech.domain.services.CadastroCozinhaService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
@@ -33,9 +36,12 @@ public class CozinhaController {
 	private CozinhaDTOtoCozinhaDomain cozinhaDomain;
 	
 	@GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-	public List<CozinhaDTO> listar(){
+	public Page<CozinhaDTO> listar(Pageable pageable){
+		Page<Cozinha> cozinhaPage = cozinhaRepository.findAll(pageable);
+		List<CozinhaDTO> cozinhaDTO = cozinhaDTOConverter.getListCozinhaDTO(cozinhaPage.getContent());
+		Page<CozinhaDTO>cozinhaDTOPage = new PageImpl<>(cozinhaDTO,pageable,cozinhaPage.getTotalElements());
 
-		return cozinhaDTOConverter.getListCozinhaDTO(cozinhaRepository.findAll());
+		return cozinhaDTOPage;
 	}
 	
 	@GetMapping("/{id}")

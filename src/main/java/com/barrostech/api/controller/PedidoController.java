@@ -11,11 +11,16 @@ import com.barrostech.domain.exception.NegocioException;
 import com.barrostech.domain.model.Pedido;
 import com.barrostech.domain.model.Usuario;
 import com.barrostech.domain.repository.PedidoRepository;
+import com.barrostech.domain.repository.filter.PedidoFilter;
 import com.barrostech.domain.services.EmissaoPedidoService;
+import com.barrostech.infrastructure.spec.PedidoSpec;
 import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.*;
@@ -42,29 +47,30 @@ public class PedidoController {
     private PedidoDTOtoDomain dtOtoDomain;
 
 
-    @GetMapping
-    public MappingJacksonValue listar(@RequestParam(required = false) String campos){
-        List<Pedido> todosPedidos = pedidoRepository.findAll();
-        List<PedidoResumoDTO> pedidoResumoDTOS = pedidoResumoDTOConverter.getListPedidoDTO(todosPedidos);
-
-        MappingJacksonValue pedidosWrapper = new MappingJacksonValue(pedidoResumoDTOS);
-        SimpleFilterProvider filterProvider = new SimpleFilterProvider();
-        filterProvider.addFilter("pedidoFilter", SimpleBeanPropertyFilter.serializeAll());
-
-        if(StringUtils.isNotBlank(campos)){
-            filterProvider.addFilter("pedidoFilter", SimpleBeanPropertyFilter.filterOutAllExcept(campos.split(",")));
-        }
-
-        pedidosWrapper.setFilters(filterProvider);
-
-        return pedidosWrapper;
-    }
 //    @GetMapping
-//    public List<PedidoResumoDTO> listar(){
+//    public MappingJacksonValue listar(@RequestParam(required = false) String campos){
 //        List<Pedido> todosPedidos = pedidoRepository.findAll();
+//        List<PedidoResumoDTO> pedidoResumoDTOS = pedidoResumoDTOConverter.getListPedidoDTO(todosPedidos);
 //
-//        return pedidoResumoDTOConverter.getListPedidoDTO(todosPedidos);
+//        MappingJacksonValue pedidosWrapper = new MappingJacksonValue(pedidoResumoDTOS);
+//        SimpleFilterProvider filterProvider = new SimpleFilterProvider();
+//        filterProvider.addFilter("pedidoFilter", SimpleBeanPropertyFilter.serializeAll());
+//
+//        if(StringUtils.isNotBlank(campos)){
+//            filterProvider.addFilter("pedidoFilter", SimpleBeanPropertyFilter.filterOutAllExcept(campos.split(",")));
+//        }
+//
+//        pedidosWrapper.setFilters(filterProvider);
+//
+//        return pedidosWrapper;
 //    }
+    @GetMapping
+    public Page<PedidoResumoDTO> pesquisar(PedidoFilter filtro, Pageable pageable){
+        Page<Pedido> todosPedidosPage = pedidoRepository.findAll(PedidoSpec.usandoFiltro(filtro),pageable);
+        List<PedidoResumoDTO> pedidoResumoDTOS = pedidoResumoDTOConverter.getListPedidoDTO(todosPedidosPage.getContent());
+        Page<PedidoResumoDTO> pedidoResumoDTOPage = new PageImpl<>(pedidoResumoDTOS,pageable, todosPedidosPage.getTotalElements());
+        return pedidoResumoDTOPage;
+    }
 
     @GetMapping("/{codigo}")
     public PedidoDTO buscar(@PathVariable String codigo){
@@ -82,7 +88,7 @@ public class PedidoController {
 
             // TODO pegar usuário autenticado
             novoPedido.setCliente(new Usuario());
-            novoPedido.getCliente().setId(1L);
+            novoPedido.getCliente().setId(3L);
 
             novoPedido = emissaoPedidoService.emitir(novoPedido);
 
