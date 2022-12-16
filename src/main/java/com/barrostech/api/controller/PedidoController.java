@@ -6,6 +6,7 @@ import com.barrostech.api.input.PedidoDTOInput;
 import com.barrostech.api.model.converter.PedidoDTOConverter;
 import com.barrostech.api.model.converter.PedidoDTOtoDomain;
 import com.barrostech.api.model.converter.PedidoResumoDTOConverter;
+import com.barrostech.core.data.PageableTranslator;
 import com.barrostech.domain.exception.EntidadeNaoEncontradaException;
 import com.barrostech.domain.exception.NegocioException;
 import com.barrostech.domain.model.Pedido;
@@ -14,19 +15,16 @@ import com.barrostech.domain.repository.PedidoRepository;
 import com.barrostech.domain.repository.filter.PedidoFilter;
 import com.barrostech.domain.services.EmissaoPedidoService;
 import com.barrostech.infrastructure.spec.PedidoSpec;
-import com.fasterxml.jackson.databind.ser.impl.SimpleBeanPropertyFilter;
-import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.converter.json.MappingJacksonValue;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/pedidos")
@@ -66,6 +64,7 @@ public class PedidoController {
 //    }
     @GetMapping
     public Page<PedidoResumoDTO> pesquisar(PedidoFilter filtro, Pageable pageable){
+        pageable = traduzirPageable(pageable);
         Page<Pedido> todosPedidosPage = pedidoRepository.findAll(PedidoSpec.usandoFiltro(filtro),pageable);
         List<PedidoResumoDTO> pedidoResumoDTOS = pedidoResumoDTOConverter.getListPedidoDTO(todosPedidosPage.getContent());
         Page<PedidoResumoDTO> pedidoResumoDTOPage = new PageImpl<>(pedidoResumoDTOS,pageable, todosPedidosPage.getTotalElements());
@@ -97,5 +96,19 @@ public class PedidoController {
             throw new NegocioException(e.getMessage(), e);
         }
     }
+
+    private Pageable traduzirPageable(Pageable pageable){
+        var mapeamento = Map.of(
+                "codigo", "codigo",
+                "cliente.nome", "cliente.nome",
+                "restaurante.nome", "restaurante.nome",
+                "valorTotal", "valorTotal"
+        );
+
+
+        return PageableTranslator.translate(pageable, mapeamento);
+    }
+
+
 
 }
