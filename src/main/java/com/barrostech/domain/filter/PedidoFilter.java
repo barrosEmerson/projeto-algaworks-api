@@ -1,4 +1,4 @@
-package com.barrostech.domain.repository.filter;
+package com.barrostech.domain.filter;
 
 import lombok.Getter;
 import lombok.Setter;

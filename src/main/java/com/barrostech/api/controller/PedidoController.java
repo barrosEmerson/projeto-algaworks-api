@@ -12,7 +12,7 @@ import com.barrostech.domain.exception.NegocioException;
 import com.barrostech.domain.model.Pedido;
 import com.barrostech.domain.model.Usuario;
 import com.barrostech.domain.repository.PedidoRepository;
-import com.barrostech.domain.repository.filter.PedidoFilter;
+import com.barrostech.domain.filter.PedidoFilter;
 import com.barrostech.domain.services.EmissaoPedidoService;
 import com.barrostech.infrastructure.spec.PedidoSpec;
 import org.springframework.beans.factory.annotation.Autowired;
